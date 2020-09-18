@@ -1,0 +1,320 @@
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+    display: block;
+}
+body {
+    line-height: 1;
+}
+ol,
+ul {
+    list-style: none;
+}
+blockquote,
+q {
+    quotes: none;
+}
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+    content: "";
+    content: none;
+}
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+/*************************************************************************
+ ***                    Début de la feuille de style                   ***
+ *************************************************************************/
+body {
+    --couleurPoint: orange;
+    --couleurPointSurvol: blue;
+    --couleurBG: white;
+    --couleurFG: black;
+    background-color: var(--couleurBG);
+    color: var(--couleurFG);
+    font-family: arial, sans-serif;
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+}
+body.darkmode {
+    --couleurPoint: yellow;
+    --couleurBG: black;
+    --couleurFG: white;
+    --couleurPointSurvol: lightblue;
+}
+
+/************************************** 
+ *          Style des points 
+ *************************************/
+.point {
+    position: absolute;
+    box-sizing: content-box;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: none;
+    padding: 0;
+    margin: 0;
+    background-color: var(--couleurPoint);
+    cursor: pointer;
+    transform-origin: center;
+    transform: translate(-50%, -50%);
+}
+.point:not(.courant):not(.erreur):hover {
+    background-color: var(--couleurPointSurvol);
+}
+
+.point.courant:before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    border: solid 2px var(--couleurPoint);
+    animation-name: halo;
+    animation-duration: 1s;
+    animation-direction: normal;
+    animation-iteration-count: infinite;
+}
+@keyframes halo {
+    0% {
+        border-color: var(--couleurPoint);
+        padding: 0;
+    }
+    60% {
+        border-color: var(--couleurPoint);
+    }
+    100% {
+        border-color: transparent;
+        padding: 20px;
+    }
+}
+
+/** Point sélectionné à tort par le joueur (-> game over) */
+.point.erreur {
+    background-color: red;
+}
+/** Point correct (= solution une fois dévoilée) */
+.point.correct {
+    background-color: green;
+}
+
+/***
+ *  Affichage du score durant la partie. 
+ */
+body[data-distance][data-steps]:before {
+    content: "Distance : " attr(data-distance) "px - Etapes : " attr(data-steps);
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 5px;
+}
+
+/**
+ *  Fenêtre popup de fin de partie avec le tableau des 10 meilleurs scores.
+ */
+#highscores {
+    position: fixed;
+    z-index: 10;
+    opacity: 0;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: lightgrey;
+    color: black;
+    padding: 10px;
+    border-radius: 15px;
+    animation-name: teardown;
+    animation-duration: 1s;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+    animation-timing-function: ease-out;
+}
+.darkmode #highscores {
+    background-color: #666;
+    color: white;
+}
+@keyframes teardown {
+    0% {
+        opacity: 0;
+        top: 40%;
+    }
+    100% {
+        opacity: 0.7;
+        top: 50%;
+    }
+}
+/** Titre au dessus du tableau **/
+#highscores h2 {
+    font-size: 30px;
+    text-align: center;
+    font-weight: bold;
+    margin: 20px;
+}
+/** Style du tableau en lui-même **/
+#highscores table {
+    margin: 20px 50px;
+    line-height: 1.5;
+    border: solid 1px #000;
+}
+#highscores table tr:nth-child(odd) {
+    background-color: #ddd;
+    color: black;
+}
+#highscores table tr:nth-child(even) {
+    background-color: #eee;
+    color: black;
+}
+#highscores th {
+    font-weight: bold;
+}
+#highscores tr > * {
+    padding: 5px 20px;
+    text-align: center;
+}
+/**  **/
+#highscores button {
+    display: block;
+    margin: 10px auto;
+    font-size: 18px;
+    padding: 5px 10px;
+    font-weight: bold;
+    border: none;
+    background-color: red;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+}
+#highscores button:hover {
+    background-color: white;
+    color: red;
+}
+
+/** Ligne de pointillés (utilisation d'un <hr> placé en absolu et orienté comme il faut **/
+hr {
+    border: dashed;
+    z-index: -1;
+    padding: 0;
+    margin: 0;
+    border-width: 1px;
+    transform-origin: left top;
+    display: none;
+    position: absolute;
+    border-color: var(--couleurPoint);
+}
+/** Visiblement uniquement si on a survolé un autre point **/
+.point:not(.courant):hover ~ hr {
+    display: block;
+}

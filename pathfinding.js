@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    const NUMBER_OF_POINTS = 100;
+    const NUMBER_OF_POINTS = 10;
 
     class Game {
         constructor() {
@@ -49,29 +49,29 @@ document.addEventListener("DOMContentLoaded", () => {
             this.handlePointClick = this.handlePointClick.bind(this);
             this.handlePointHove = this.handlePointHove.bind(this);
 
-            while (this.state.points.length < NUMBER_OF_POINTS) {
-                let newPoint = Point.random(this.handlePointClick, this.handlePointHove);
-
-                // Set the first point as current
-                if (this.state.points.length === 0) {
-                    newPoint.element.classList.add("courant");
-                    this.state.current = newPoint;
-                }
-
-                // Check distance to other points
-                if (
-                    !this.state.points.some((point) => point.distanceTo(newPoint) < 20) &&
-                    !(newPoint.pos.x <= 220 && newPoint.pos.y <= 46)
-                ) {
-                    this.state.points.push(newPoint);
-                    document.body.appendChild(newPoint.element);
-                }
-            }
-
             this.hr = document.createElement("hr");
             document.body.appendChild(this.hr);
 
+            while (this.state.points.length < NUMBER_OF_POINTS) {
+                this.setNewPoint();
+            }
+
+            this.state.points[0].element.classList.add("courant");
+            this.state.current = this.state.points[0];
+
             this.updateScore(this.state);
+        }
+
+        setNewPoint() {
+            do {
+                var newPoint = Point.random(this.handlePointClick, this.handlePointHove);
+            } while (
+                this.state.points.some((point) => point.distanceTo(newPoint) < 20) ||
+                (newPoint.pos.x <= 220 && newPoint.pos.y <= 46)
+            );
+
+            this.state.points.push(newPoint);
+            document.body.insertBefore(newPoint.element, this.hr);
         }
 
         getClosest() {
@@ -131,6 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 state.current = point;
                 point.element.classList.add("courant");
                 this.updateScore(state);
+                this.setNewPoint();
             } else {
                 point.element.classList.add("erreur");
                 closest.element.classList.add("correct");

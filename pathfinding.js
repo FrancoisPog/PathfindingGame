@@ -67,6 +67,24 @@ document.addEventListener("DOMContentLoaded", () => {
                 lost: false,
             };
 
+            if (sessionStorage.getItem("theme") == "dark") {
+                document.body.classList.add("darkmode");
+            } else {
+                document.body.classList.remove("darkmode");
+            }
+
+            document.onkeydown = (e) => {
+                if (e.key === "d") {
+                    document.body.classList.toggle("darkmode");
+
+                    if (document.body.classList.contains("darkmode")) {
+                        sessionStorage.setItem("theme", "dark");
+                    } else {
+                        sessionStorage.setItem("theme", "light");
+                    }
+                }
+            };
+
             // Define 'this' for the function
             this.handlePointClick = this.handlePointClick.bind(this);
             this.handlePointHove = this.handlePointHove.bind(this);
@@ -156,9 +174,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            // if (point === this.state.current) {
-            //     point.dom.style.padding = point.distanceTo(this.getClosest()) + "px";
-            // }
             let current = this.state.current;
             let hr = this.hr;
 
@@ -169,7 +184,7 @@ document.addEventListener("DOMContentLoaded", () => {
             let dx = current.pos.x - point.pos.x;
             let dy = current.pos.y - point.pos.y;
             let angle = Math.atan(dy / dx);
-            if (current.pos.x > point.pos.x) {
+            if (current.pos.x >= point.pos.x) {
                 angle += Math.PI;
             }
 

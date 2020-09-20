@@ -171,11 +171,6 @@ body.darkmode {
     background-color: var(--couleurPointSurvol);
 }
 
-/* .point.courant:hover {
-    box-sizing: border-box;
-    opacity: 0.3;
-} */
-
 .point.courant:before {
     content: "";
     position: absolute;

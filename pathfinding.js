@@ -24,6 +24,11 @@ document.addEventListener("DOMContentLoaded", () => {
             return Math.sqrt((that.pos.x - this.pos.x) ** 2 + (that.pos.y - this.pos.y) ** 2);
         }
 
+        /**
+         * Create a random point
+         * @param {Function} onClick Click handler
+         * @param {Function} onHove Hover handler
+         */
         static random(onClick, onHove) {
             return new Point(
                 10 + Math.random() * (window.innerWidth - 20),
@@ -38,6 +43,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     class Game {
         constructor() {
+            document.body.innerHTML = "";
+
             this.state = {
                 points: [],
                 current: undefined,
@@ -46,14 +53,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 lost: false,
             };
 
-            this.hallOfFame = new HallOfFame();
-
             // Define 'this' for the function
             this.handlePointClick = this.handlePointClick.bind(this);
             this.handlePointHove = this.handlePointHove.bind(this);
 
             this.hr = document.createElement("hr");
             document.body.appendChild(this.hr);
+
+            this.hallOfFame = new HallOfFame(this.start);
 
             while (this.state.points.length < NUMBER_OF_POINTS) {
                 this.setNewPoint();
@@ -65,6 +72,9 @@ document.addEventListener("DOMContentLoaded", () => {
             this.updateScore(this.state);
         }
 
+        /**
+         * Set a new point in the document
+         */
         setNewPoint() {
             do {
                 var newPoint = Point.random(this.handlePointClick, this.handlePointHove);
@@ -77,6 +87,9 @@ document.addEventListener("DOMContentLoaded", () => {
             document.body.insertBefore(newPoint.dom, this.hr);
         }
 
+        /**
+         * Get the closest point to another point
+         */
         getClosest() {
             return this.state.points
                 .filter((p) => p !== this.state.current)
@@ -88,12 +101,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
         }
 
+        /**
+         * Update the score on the document
+         */
         updateScore() {
             let { steps, distance } = this.state;
             document.body.setAttribute("data-steps", steps);
             document.body.setAttribute("data-distance", Math.floor(distance));
         }
 
+        /**
+         * Finish the game
+         */
         gameOver() {
             this.state.lost = true;
             this.hr.remove();
@@ -114,6 +133,10 @@ document.addEventListener("DOMContentLoaded", () => {
             this.hallOfFame.display();
         }
 
+        /**
+         * Trace a line between the current and the hovered point
+         * @param {Point} point The hovered point
+         */
         handlePointHove(point) {
             if (this.state.lost) {
                 return;
@@ -135,6 +158,10 @@ document.addEventListener("DOMContentLoaded", () => {
             hr.style.transform = `rotate(${angle}rad)`;
         }
 
+        /**
+         * Check if the clicked point is the closest
+         * @param {Point} point The clicked point
+         */
         handlePointClick(point) {
             if (this.state.lost) {
                 return;
@@ -162,8 +189,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 this.gameOver();
             }
         }
-
-        reset() {}
     }
 
     class HallOfFame {
@@ -174,6 +199,9 @@ document.addEventListener("DOMContentLoaded", () => {
             this.dom = document.createElement("div");
         }
 
+        /**
+         * Display the hall of Fame in the doc
+         */
         display() {
             this.dom.id = "highscores";
 
@@ -214,21 +242,26 @@ document.addEventListener("DOMContentLoaded", () => {
             let replay = document.createElement("button");
             replay.textContent = "Try again !";
 
-            replay.onclick = () => {
-                document.body.innerHTML = "";
-                new Game();
-            };
+            replay.onclick = () => new Game();
 
             this.dom.appendChild(replay);
 
             document.body.appendChild(this.dom);
         }
 
+        /**
+         * Check if the score allow to appear in the top 10
+         * @param {Object} param0
+         */
         isInTopTen({ distance, steps }) {
             console.log(this.topTen);
             return this.topTen.length < 10 || distance > this.topTen[9].distance;
         }
 
+        /**
+         * Add a player in the top 10
+         * @param {Object} playerData
+         */
         add(playerData) {
             let i = 0;
             while (i < this.topTen.length && this.topTen[i].distance >= playerData.distance) {
@@ -238,6 +271,9 @@ document.addEventListener("DOMContentLoaded", () => {
             this._save();
         }
 
+        /**
+         * Save the top 10 in the local storage
+         */
         _save() {
             localStorage.setItem("topTen", JSON.stringify(this.topTen));
         }

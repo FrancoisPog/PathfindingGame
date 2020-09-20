@@ -3,17 +3,31 @@
 document.addEventListener("DOMContentLoaded", () => {
     class Point {
         constructor(posX, posY, onClick, onHove) {
-            this.pos = {
+            this.pos0 = {
                 x: posX,
                 y: posY,
             };
             this.dom = document.createElement("div");
-            this.dom.style.top = posY + "px";
-            this.dom.style.left = posX + "px";
+            this.dom.style.top = (posY / window.innerHeight) * 100 + "%";
+            this.dom.style.left = (posX / window.innerWidth) * 100 + "%";
             this.dom.classList.add("point");
 
             this.dom.onclick = () => onClick(this);
             this.dom.onmouseover = () => onHove(this);
+        }
+
+        get pos() {
+            // if the point is positioned on the document, it returns the real position of the element,
+            // otherwise it returns the initial position (pos0)
+            if (this.dom.offsetLeft) {
+                delete this.pos0;
+                return {
+                    x: this.dom.offsetLeft,
+                    y: this.dom.offsetTop,
+                };
+            } else {
+                return this.pos0;
+            }
         }
 
         /**
@@ -141,6 +155,10 @@ document.addEventListener("DOMContentLoaded", () => {
             if (this.state.lost) {
                 return;
             }
+
+            // if (point === this.state.current) {
+            //     point.dom.style.padding = point.distanceTo(this.getClosest()) + "px";
+            // }
             let current = this.state.current;
             let hr = this.hr;
 
@@ -254,7 +272,7 @@ document.addEventListener("DOMContentLoaded", () => {
          * @param {Object} param0
          */
         isInTopTen({ distance, steps }) {
-            console.log(this.topTen);
+            //console.table(this.topTen);
             return this.topTen.length < 10 || distance > this.topTen[9].distance;
         }
 

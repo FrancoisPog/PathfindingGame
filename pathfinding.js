@@ -67,24 +67,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 lost: false,
             };
 
-            if (sessionStorage.getItem("theme") == "dark") {
-                document.body.classList.add("darkmode");
-            } else {
-                document.body.classList.remove("darkmode");
-            }
-
-            document.onkeydown = (e) => {
-                if (e.key === "d") {
-                    document.body.classList.toggle("darkmode");
-
-                    if (document.body.classList.contains("darkmode")) {
-                        sessionStorage.setItem("theme", "dark");
-                    } else {
-                        sessionStorage.setItem("theme", "light");
-                    }
-                }
-            };
-
             // Define 'this' for the function
             this.handlePointClick = this.handlePointClick.bind(this);
             this.handlePointHove = this.handlePointHove.bind(this);
@@ -312,5 +294,32 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    new Game();
+    if (sessionStorage.getItem("theme") == "dark") {
+        document.body.classList.add("darkmode");
+    } else {
+        document.body.classList.remove("darkmode");
+    }
+
+    document.onkeydown = (e) => {
+        if (e.key === "d") {
+            document.body.classList.toggle("darkmode");
+
+            if (document.body.classList.contains("darkmode")) {
+                sessionStorage.setItem("theme", "dark");
+            } else {
+                sessionStorage.setItem("theme", "light");
+            }
+        }
+    };
+
+    let game = new Game();
+
+    // setInterval(() => {
+    //     game.getClosest().dom.dispatchEvent(new Event("mouseover"));
+    //     game.getClosest().dom.classList.add("hover");
+
+    //     setTimeout(() => {
+    //         game.getClosest().dom.click();
+    //     }, 500);
+    // }, 1000);
 });

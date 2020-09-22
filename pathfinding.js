@@ -65,11 +65,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 distance: 0,
                 steps: 0,
                 lost: false,
+                joker: 3,
             };
 
-            // Define 'this' for the function
+            // Define 'this' for functions
             this.handlePointClick = this.handlePointClick.bind(this);
             this.handlePointHove = this.handlePointHove.bind(this);
+            this.useJoker = this.useJoker.bind(this);
 
             this.hr = document.createElement("hr");
             document.body.appendChild(this.hr);
@@ -84,6 +86,26 @@ document.addEventListener("DOMContentLoaded", () => {
             this.state.current = this.state.points[0];
 
             this.updateScore(this.state);
+
+            document.addEventListener("keydown", this.useJoker);
+        }
+
+        /**
+         * Show to player the closest point
+         * @param {Event} e
+         */
+        useJoker(e) {
+            if (
+                !this.state.lost &&
+                e.ctrlKey &&
+                e.key === "c" &&
+                this.state.joker > 0 &&
+                !this.state.points.some((p) => p.dom.classList.contains("joker"))
+            ) {
+                this.getClosest().dom.classList.add("joker");
+                this.state.joker--;
+                this.updateScore();
+            }
         }
 
         /**
@@ -94,7 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 var newPoint = Point.random(this.handlePointClick, this.handlePointHove);
             } while (
                 this.state.points.some((point) => point.distanceTo(newPoint) < 20) ||
-                (newPoint.pos.x <= 220 && newPoint.pos.y <= 46)
+                (newPoint.pos.x <= 350 && newPoint.pos.y <= 46)
             );
 
             this.state.points.push(newPoint);
@@ -119,9 +141,10 @@ document.addEventListener("DOMContentLoaded", () => {
          * Update the score on the document
          */
         updateScore() {
-            let { steps, distance } = this.state;
+            let { steps, distance, joker } = this.state;
             document.body.setAttribute("data-steps", steps);
             document.body.setAttribute("data-distance", Math.floor(distance));
+            document.body.setAttribute("data-jokers", joker);
         }
 
         /**
@@ -196,11 +219,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 state.current.dom.remove();
                 state.current = point;
                 point.dom.classList.add("courant");
+                point.dom.classList.remove("joker");
                 this.updateScore(state);
                 this.setNewPoint();
             } else {
                 point.dom.classList.add("erreur");
                 closest.dom.classList.add("correct");
+                closest.dom.classList.remove("joker");
                 this.gameOver();
             }
         }
@@ -300,7 +325,9 @@ document.addEventListener("DOMContentLoaded", () => {
         document.body.classList.remove("darkmode");
     }
 
-    document.onkeydown = (e) => {
+    let game = new Game();
+
+    document.addEventListener("keydown", (e) => {
         if (e.key === "d") {
             document.body.classList.toggle("darkmode");
 
@@ -310,16 +337,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 sessionStorage.setItem("theme", "light");
             }
         }
-    };
+    });
 
-    let game = new Game();
-
+    // const speed = 1;
     // setInterval(() => {
     //     game.getClosest().dom.dispatchEvent(new Event("mouseover"));
     //     game.getClosest().dom.classList.add("hover");
 
     //     setTimeout(() => {
     //         game.getClosest().dom.click();
-    //     }, 500);
-    // }, 1000);
+    //     }, 500 / speed);
+    // }, 1000 / speed);
 });

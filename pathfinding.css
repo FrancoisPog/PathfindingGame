@@ -215,8 +215,9 @@ body.darkmode {
 /***
  *  Affichage du score durant la partie. 
  */
-body[data-distance][data-steps]:before {
-    content: "Distance : " attr(data-distance) "px - Etapes : " attr(data-steps);
+body[data-distance][data-steps][data-jokers]:before {
+    content: "Distance : " attr(data-distance) "px - Etapes : " attr(data-steps) " - Jokers : " attr(data-jokers)
+        " (ctrl+C)";
     position: absolute;
     top: 0;
     left: 0;
@@ -305,6 +306,7 @@ body[data-distance][data-steps]:before {
 
 /** Ligne de pointillés (utilisation d'un <hr> placé en absolu et orienté comme il faut **/
 hr {
+    /* L'animation de la ligne vient de Valentin */
     border: none;
     background: linear-gradient(to right, var(--couleurPoint) 50%, white 50%) repeat;
     background-size: 10px;
@@ -338,4 +340,41 @@ hr {
 .point:not(.courant):hover ~ hr,
 .point:not(.courant).hover ~ hr {
     display: block;
+}
+
+.point.joker {
+    background-color: violet;
+    animation: rotateJoker 2s linear infinite;
+}
+
+@keyframes rotateJoker {
+    from {
+        transform: translate(-50%, -50%) rotate(0);
+    }
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+@keyframes arrowMove {
+    0% {
+        transform: translate(-50%, -50%);
+    }
+    50% {
+        transform: translate(-50%, 0);
+    }
+    100% {
+        transform: translate(-50%, -50%);
+    }
+}
+
+.point.joker:before {
+    content: "\2193";
+    font-size: 30px;
+    position: absolute;
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: arrowMove 0.8s linear infinite;
+    color: violet;
 }

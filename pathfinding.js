@@ -207,6 +207,7 @@ document.addEventListener("DOMContentLoaded", () => {
             let state = this.state;
 
             if (point === state.current) {
+                alert("You are clicking on the current point...");
                 return;
             }
 

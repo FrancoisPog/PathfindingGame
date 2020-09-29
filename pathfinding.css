@@ -217,7 +217,7 @@ body.darkmode {
  */
 body[data-distance][data-steps][data-jokers]:before {
     content: "Distance : " attr(data-distance) "px - Etapes : " attr(data-steps) " - Jokers : " attr(data-jokers)
-        " (ctrl+C)";
+        " (ctrl+c)";
     position: absolute;
     top: 0;
     left: 0;
@@ -377,4 +377,5 @@ hr {
     transform: translateX(-50%);
     animation: arrowMove 0.8s linear infinite;
     color: violet;
+    z-index: 100;
 }
